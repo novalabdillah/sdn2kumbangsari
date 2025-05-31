@@ -185,8 +185,8 @@
   <div class="header">
     <button class="login-button" onclick="document.getElementById('loginModal').style.display='block'">Login Admin</button>
     <img src="Lambang.png" alt="Logo Sekolah" style="height: 100px;">
-    <h1>SD NEGERI 1 TAMANSARI</h1>
-    <p>Jl. Cemara No. 27 Tamansari, Kecamatan Sumbermalang</p>
+    <h1>SD NEGERI 2 KUMBANGSARI</h1>
+    <p>Jl. Dusun Krajan, Desa Kumbangsari, Kecamatan Jangkar</p>
   </div>
   <!-- Input Pencarian Nomor Surat -->
     <div style="max-width: 500px; margin: 20px auto;">
@@ -222,7 +222,7 @@
   hasil.style.display = "block"; // ✅ tampilkan container hasil
   hasil.innerHTML = "<p>🔄 Memuat data...</p>";
 
-  fetch("https://docs.google.com/spreadsheets/d/1qzOUHMPL8Tn9dUKtLox97U_G37eJ0SQc8nJW0SOikI8/gviz/tq?tqx=out:json")
+  fetch("https://docs.google.com/spreadsheets/d/1QIZNt_B6q1E4PeQ_F_31ZxOfSDVX-rRAmQSBZFpnqgg/gviz/tq?tqx=out:json")
     .then(res => res.text())
     .then(text => {
       const json = JSON.parse(text.substring(47).slice(0, -2));
@@ -262,7 +262,7 @@
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
     
-        if (username === "admin" && password === "sdn1Tamansari") {
+        if (username === "admin" && password === "sdn2kumbangsari") {
           window.location.href = "datasurat.html";
         } else {
           document.getElementById("loginError").style.display = "block";
