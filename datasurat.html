@@ -195,17 +195,17 @@
   }
 
   function getInputValues() {
-    return [
-      '',
-      document.getElementById('noSurat').value,
-      document.getElementById('tglSurat').value,
-      document.getElementById('penandatangan').value,
-      document.getElementById('jabatan').value,
-      document.getElementById('perihal').value,
-      document.getElementById('unitKerja').value,
-      document.getElementById('linkPdf').value
-    ];
-  }
+  return [
+    '',
+    document.getElementById('noSurat').value.toString(), // hanya tanda petik di depan
+    document.getElementById('tglSurat').value.toString(),
+    document.getElementById('penandatangan').value.toString(),
+    document.getElementById('jabatan').value.toString(),
+    document.getElementById('perihal').value.toString(),
+    document.getElementById('unitKerja').value.toString(),
+    document.getElementById('linkPdf').value.toString()
+  ];
+}
 
   async function addData() {
     const data = getInputValues();
@@ -345,7 +345,94 @@
   }
 }
 
-
 </script>
+
+<!-- Tambahkan sebelum tag penutup </body> -->
+<script>
+  const ITEMS_PER_PAGE = 10;
+  let currentPage = 1;
+  let allData = [];
+
+  async function fetchData() {
+    const res = await fetch(`${API_URL}?action=read`);
+    const data = await res.json();
+    allData = data.slice(1).filter(row => !isRowEmpty(row));
+    renderTable();
+    renderPagination();
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('dataTable');
+    tbody.innerHTML = '';
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    const pageData = allData.slice(start, end);
+
+    let rowNumber = start + 1;
+    pageData.forEach((row, i) => {
+      const tr = document.createElement('tr');
+      tr.className = i % 2 === 0 ? 'bg-white' : 'bg-blue-50';
+      tr.innerHTML = `
+        <td class="px-4 py-2">${rowNumber++}</td>
+        <td class="px-4 py-2">${row[1]}</td>
+        <td class="px-4 py-2">${row[2]}</td>
+        <td class="px-4 py-2">${row[3]}</td>
+        <td class="px-4 py-2">${row[4]}</td>
+        <td class="px-4 py-2">${row[5]}</td>
+        <td class="px-4 py-2">${row[6]}</td>
+        <td class="px-4 py-2 text-center">
+          <a href="${row[7]}" class="text-blue-500" target="_blank" title="Lihat">
+            <span class="material-icons">link</span>
+          </a>
+        </td>
+        <td class="px-4 py-2 text-center">
+          <button onclick="showQRCodePopup('${row[8]}')" title="Lihat QR Code">
+            <span class="material-icons text-blue-500">qr_code</span>
+          </button>
+        </td>
+        <td class="px-4 py-2 text-center">
+          <div class="flex items-center justify-center gap-2">
+            <button onclick='editData(${start + i + 1}, ${JSON.stringify(row).replace(/"/g, "&quot;")})' title="Edit">
+              <span class="material-icons text-blue-500">edit_note</span>
+            </button>
+            <button onclick="deleteData(${start + i + 1})" title="Hapus">
+              <span class="material-icons text-blue-500">delete_outline</span>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderPagination() {
+    let paginationContainer = document.getElementById('pagination');
+    if (!paginationContainer) {
+      paginationContainer = document.createElement('div');
+      paginationContainer.id = 'pagination';
+      paginationContainer.className = 'mt-4 flex justify-center gap-2';
+      document.querySelector('.max-w-7xl').appendChild(paginationContainer);
+    }
+    paginationContainer.innerHTML = '';
+
+    const totalPages = Math.ceil(allData.length / ITEMS_PER_PAGE);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.className = `px-3 py-1 rounded ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+      btn.textContent = i;
+      btn.onclick = () => {
+        currentPage = i;
+        renderTable();
+        renderPagination();
+      };
+      paginationContainer.appendChild(btn);
+    }
+  }
+
+  // Panggil saat dokumen siap
+  window.onload = fetchData;
+</script>
+
 </body>
 </html>
